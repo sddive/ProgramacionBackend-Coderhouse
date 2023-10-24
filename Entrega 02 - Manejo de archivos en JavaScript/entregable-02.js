@@ -72,17 +72,17 @@ class ProductManager{
         let products = this.getProducts()
         let index = products.findIndex(p=>p.id===id)
         if(index===-1){
-            console.log(`The product ${id} not exist`)
+            console.log("Product does not exist")
             return 
         }
         
         if (this.#validProduct(object)){
-            products[index]={
+            products[index] = {
                 ...products[index],
                 ...object
             }
-            productsByCode = products.filter(p=>p.code===products[index].code)
-            if (productsByCode.length()>1){
+            const productsByCode = products.filter(p=>p.code===products[index].code)
+            if (productsByCode.length>1){
                 console.log("The code already exists")
             }else{
                 fs.writeFileSync(this.path, JSON.stringify(products, null, 5))
@@ -94,7 +94,7 @@ class ProductManager{
         let products = this.getProducts()
         let index = products.findIndex(p=>p.id===id)
         if(index===-1){
-            console.log(`The product ${id} not exist`)
+            console.log("Product does not exist")
             return 
         }
         products.splice(index, 1)
@@ -133,7 +133,10 @@ console.log(productManager.getProductById(1))
 console.log(productManager.getProductById(2))
 console.log(productManager.getProductById(50)) // Not found
 
-productManager.updateProduct(2, {title:"producto prueba 2", description:"Este es un producto prueba 2"})
+productManager.updateProduct(2, {title:"producto prueba 2", description:"Este es un producto prueba 2", code:"abc12345"}) // Ok
+console.log(productManager.getProducts())
+
+productManager.updateProduct(2, {title:"producto prueba 3", description:"Este es un producto prueba 3", code:"abc123"}) // Error mismo code que id 1
 console.log(productManager.getProducts())
 
 productManager.deleteProduct(2) // elimina el producto
