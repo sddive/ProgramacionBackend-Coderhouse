@@ -72,17 +72,21 @@ class ProductManager{
         let products = this.getProducts()
         let index = products.findIndex(p=>p.id===id)
         if(index===-1){
-            console.log(`El producto con id ${id} no existe en BD`)
+            console.log(`The product ${id} not exist`)
             return 
         }
-        // if products.find(product=>product.code===object.code
-
+        
         if (this.#validProduct(object)){
             products[index]={
                 ...products[index],
                 ...object
             }
-            fs.writeFileSync(this.path, JSON.stringify(products, null, 5))
+            productsByCode = products.filter(p=>p.code===products[index].code)
+            if (productsByCode.length()>1){
+                console.log("The code already exists")
+            }else{
+                fs.writeFileSync(this.path, JSON.stringify(products, null, 5))
+            }            
         }
     }
 
