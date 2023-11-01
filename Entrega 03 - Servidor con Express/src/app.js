@@ -6,7 +6,7 @@ const PORT = 8080
 const app = express()
 
 app.get('/', (req, res)=>{
-    res.send("Soy otro server, ahora desarrollado con ExpressJS...!!!")
+    res.send('Server on line')
 })
 
 app.get('/products', async (req, res)=>{
@@ -18,7 +18,7 @@ app.get('/products', async (req, res)=>{
         res.setHeader('Content-Type','application/json');
         res.status(200).json({products}); 
     } catch {
-
+        res.status(500).send('Exception');
     }
 })
 
@@ -26,13 +26,17 @@ app.get('/products/:idProduct', async (req, res)=>{
     try {
         let idProduct = req.params.idProduct
         if(isNaN(idProduct)){
-            return res.send('Error, ingrese un argumento id numerico')
+            return res.send('Error, the id is not numeric')
         }
         let product = await productManager.getProductById(parseInt(idProduct))
         res.setHeader('Content-Type','application/json');
-        res.status(200).json({product});
+        if (Object.entries(product).length === 0){
+            res.status(404).json({ error: 'Product not found' });
+        } else {
+            res.status(200).json({product});
+        } 
     } catch {
-
+        res.status(404).json({ error: 'Product not found' });
     }   
 })
 

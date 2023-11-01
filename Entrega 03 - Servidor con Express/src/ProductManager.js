@@ -71,8 +71,7 @@ export default class ProductManager{
             let products =  await this.getProducts()
             let productById = products.find(product=>product.id===id)
             if(!productById){
-                console.log('Not found')
-                return
+                return {}
             }
             return productById
         } catch (error) {
