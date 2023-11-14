@@ -11,7 +11,6 @@ export default class CartManager{
     async getCarts(){
         try {
             if (fs.existsSync(this.path)){
-                console.log('antes de abrir')
                 return JSON.parse(await fs.promises.readFile(this.path, 'utf-8'))
             } else {
                 return []
