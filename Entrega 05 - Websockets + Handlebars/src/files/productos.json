@@ -1,0 +1,87 @@
+[
+     {
+          "id": 1,
+          "title": "Bicicleta",
+          "description": "Bicicleta Montaña Rodado 29 Con 21 Velocidad Aro 29 Premium",
+          "price": 200,
+          "thumbnail": [
+               "image1_1.jpg",
+               "image1_2.jpg",
+               "image1_3.jpg"
+          ],
+          "code": "P001",
+          "category": "Deportes",
+          "status": false,
+          "stock": 5
+     },
+     {
+          "id": 2,
+          "title": "Colchon",
+          "description": "Colchón 1 Plaza Ortopédico Reversible 100% Espuma 80 Cm",
+          "price": 200,
+          "thumbnail": "Sin imagen",
+          "code": "P002",
+          "category": "Muebles",
+          "status": true,
+          "stock": 50
+     },
+     {
+          "id": 3,
+          "title": "Smart TV 50",
+          "description": "Smart TV Hyundai HYDK50UHD webOS 4K 50",
+          "price": 200,
+          "thumbnail": "Sin imagen",
+          "code": "P003",
+          "category": "Televisores",
+          "status": true,
+          "stock": 25
+     },
+     {
+          "id": 4,
+          "title": "Sillon",
+          "description": "Sillon Recliner Sofa Reclinable Poltrona Butaca Olimpia",
+          "price": 200,
+          "thumbnail": "Sin imagen",
+          "code": "P004",
+          "category": "Muebles",
+          "status": false,
+          "stock": 10
+     },
+     {
+          "id": 5,
+          "title": "Lavarropas",
+          "description": "Lavarropas automático Greenwind GWL6K blanco 6kg 220 V - 240 V",
+          "price": 200,
+          "thumbnail": [
+               "image2_1.jpg",
+               "image2_2.jpg",
+               "image2_3.jpg"
+          ],
+          "code": "P005",
+          "status": true,
+          "category": "Electrodomesticos",
+          "stock": 15
+     },
+     {
+          "id": 6,
+          "title": "producto prueba 4",
+          "description": "Este es un producto prueba",
+          "price": 200,
+          "thumbnail": "Sin imagen",
+          "code": "ab45558",
+          "status": true,
+          "category": "buzos",
+          "stock": 25
+     },
+     {
+          "id": 7,
+          "title": "producto prueba 4",
+          "description": "Este es un producto prueba",
+          "price": 200,
+          "thumbnail": "Sin imagen",
+          "code": "ab45553",
+          "status": true,
+          "category": "buzos",
+          "stock": 25
+     }
+]
