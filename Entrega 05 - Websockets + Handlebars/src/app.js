@@ -31,9 +31,9 @@ app.use('/', viewsRouter)
 
 io.on('connection', socket=>{
     console.log('cliente conectado')
-    socket.on('id', async ()=>{
+    socket.on('getProducts', async ()=>{
         const products = await productManager.getProducts()
-        socket.emit('getProduct', products)
+        socket.emit('allProducts', products)
     })
 })
 

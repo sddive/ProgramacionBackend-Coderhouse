@@ -45,8 +45,8 @@ router.post('/', async (req, res)=>{
         if (result.hasOwnProperty('error')){
             res.status(400).json({status: 'error', result})
         } else {
-            const products = await productManager.getProducts()
-            io.emit('getProduct', products)            
+            // const products = await productManager.getProducts()
+            io.emit('newProduct', result)            
             res.status(200).json({ status: 'success', message: 'product added successfully' })
         } 
     } catch (error) {
@@ -85,7 +85,8 @@ router.delete('/:idProduct', async (req, res)=>{
             res.status(404).json({ status: 'error', error: 'product not found' })
         } else {
             const products = await productManager.getProducts()
-            io.emit('getProduct', products)
+            console.log(result)
+            io.emit('deleteProduct', result)
             res.status(200).json({ status: 'success', message: 'product successfully removed' })
         } 
     } catch (error) {

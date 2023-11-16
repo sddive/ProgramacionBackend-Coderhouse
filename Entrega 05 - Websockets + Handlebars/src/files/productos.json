@@ -61,27 +61,5 @@
           "status": true,
           "category": "Electrodomesticos",
           "stock": 15
-     },
-     {
-          "id": 6,
-          "title": "producto prueba 4",
-          "description": "Este es un producto prueba",
-          "price": 200,
-          "thumbnail": "Sin imagen",
-          "code": "ab45558",
-          "status": true,
-          "category": "buzos",
-          "stock": 25
-     },
-     {
-          "id": 7,
-          "title": "producto prueba 4",
-          "description": "Este es un producto prueba",
-          "price": 200,
-          "thumbnail": "Sin imagen",
-          "code": "ab45553",
-          "status": true,
-          "category": "buzos",
-          "stock": 25
      }
 ]

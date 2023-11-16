@@ -18,16 +18,8 @@ router.get('/', async (req, res)=>{
 })
 
 router.get('/realtimeproducts', async (req, res)=>{
-    const products = await productManager.getProducts()
-    const title = 'Tienda online - En tiempo real'
-    if(products){        
-        res.status(200).render('products', {title})
-        // io.on('id', async ()=>{
-        //     socket.emit('getProduct', products)
-        // })
-    } else {
-        res.status(404)
-    }
+    const title = 'Tienda online - En tiempo real'      
+    res.status(200).render('realtimeproducts', {title})
 })
 
 

@@ -145,7 +145,7 @@ export default class ProductManager{
             }
             let product = products.splice(index, 1) 
             await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
-            return product   
+            return product[0]   
         } catch (error) {
             throw new Error(error.message)  
         }
