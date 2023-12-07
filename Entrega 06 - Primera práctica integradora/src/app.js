@@ -5,7 +5,7 @@ import productsRouter from './routers/products.router.js'
 import cartsRouter from './routers/carts.router.js'
 import viewsRouter from './routers/views.router.js'
 import __dirname from './utils.js'
-import ProductManager from './classes/ProductManager.js'
+import ProductManager from './dao/ProductManager.js'
 import mongoose from 'mongoose'
 
 const PORT = 8080

@@ -1,7 +1,8 @@
 import { Router } from 'express'
-import ProductManager from '../classes/ProductManager.js'
+import ProductManager from '../dao/ProductManagerBD.js'
 import __dirname from '../utils.js'
 import { io } from '../app.js'
+import mongoose from "mongoose";
 
 const router = Router()
 let productManager = new ProductManager(__dirname + "/files/productos.json")
@@ -22,10 +23,11 @@ router.get('/', async (req, res)=>{
 router.get('/:idProduct', async (req, res)=>{
     try {
         let idProduct = req.params.idProduct
-        if(isNaN(idProduct)){
-            return res.send('Error, the id is not numeric')
+        if(!mongoose.Types.ObjectId.isValid(idProduct)){
+            res.setHeader('Content-Type','application/json');
+            return res.status(400).json({error:`Ingrese un id válido...!!!`})
         }
-        let product = await productManager.getProductById(parseInt(idProduct))
+        let product = await productManager.getProductById(idProduct)
         res.setHeader('Content-Type','application/json');
         if (product.hasOwnProperty('error')){
             res.status(404).json({ status: 'error', error: 'product not found' });
@@ -57,11 +59,8 @@ router.post('/', async (req, res)=>{
 router.put('/:idProduct', async (req, res)=>{
     try {
         let idProduct = req.params.idProduct
-        if(isNaN(idProduct)){
-            return res.status(400).json({ status: 'error', error: 'the id is not numeric'})
-        }
         let updateProduct = req.body
-        let result = await productManager.updateProduct(parseInt(idProduct), updateProduct)
+        let result = await productManager.updateProduct(idProduct, updateProduct)
         res.setHeader('Content-Type','application/json');
         if (result.hasOwnProperty('error')){
             res.status(400).json( {status: 'error', result} );
@@ -76,10 +75,11 @@ router.put('/:idProduct', async (req, res)=>{
 router.delete('/:idProduct', async (req, res)=>{
     try {
         let idProduct = req.params.idProduct
-        if(isNaN(idProduct)){
-            return res.status(400).send( {status: 'error', error: 'the id is not numeric'})
+        if(!mongoose.Types.ObjectId.isValid(idProduct)){
+            res.setHeader('Content-Type','application/json');
+            return res.status(400).json({error:`Ingrese un id válido...!!!`})
         }
-        const result = await productManager.deleteProduct(parseInt(idProduct))
+        const result = await productManager.deleteProduct(idProduct)
         res.setHeader('Content-Type','application/json');
         if (Object.entries(result).length === 0){
             res.status(404).json({ status: 'error', error: 'product not found' })

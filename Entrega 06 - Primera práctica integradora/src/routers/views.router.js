@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import ProductManager from '../classes/ProductManager.js'
+import ProductManager from '../dao/ProductManagerBD.js'
 import __dirname from '../utils.js'
 import { io } from '../app.js'
 

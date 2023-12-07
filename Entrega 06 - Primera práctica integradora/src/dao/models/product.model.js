@@ -6,7 +6,9 @@ const productsSchema=new mongoose.Schema(
         title: String, 
         description: String, 
         price: Number, 
-        thumbnail: String,  
+        thumbnail: {
+            type: [String], default: []
+        },  
         code: {
             type: String, unique:true, required: true 
         },
@@ -16,18 +18,14 @@ const productsSchema=new mongoose.Schema(
 
         nombre: String, 
         apellido: String,
-        email: {
-           type: String, unique:true, required: true 
-        }, 
+        email:String, 
         edad: Number, 
         deleted: {
             type: Boolean, default: false 
         }
     },
     {
-        timestamps: true,
-        // collection: 'bigUsers',
-        strict: false
+        timestamps: true
     }
 )
 

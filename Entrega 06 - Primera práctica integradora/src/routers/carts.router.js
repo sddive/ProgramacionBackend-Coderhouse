@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import CartManager from '../classes/CartManager.js'
+import CartManager from '../dao/CartManagerBD.js'
 import __dirname from '../utils.js'
 
 const router = Router()
@@ -24,7 +24,7 @@ router.get('/:cid', async (req, res)=>{
     try {
         let idCart = req.params.cid
         console.log(idCart)
-        let productsToCart = await cartManager.getProductsToCart(parseInt(idCart))
+        let productsToCart = await cartManager.getProductsToCart(idCart)
         if (!productsToCart){
             res.status(404).json({ status: 'error',  error: 'cart not found' })
         } else {
