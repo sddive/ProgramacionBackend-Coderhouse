@@ -38,9 +38,7 @@ router.get('/:cid', async (req, res)=>{
 router.post('/:cid/product/:pid', async (req, res)=>{
     res.setHeader('Content-Type','application/json')
     try {
-        let idCart = req.params.cid
-        let idProduct = req.params.pid
-        let cart = await cartManager.addProduct(parseInt(idCart), parseInt(idProduct))
+        const cart = await cartManager.addProduct(req.params.cid, req.params.pid)
         if (!cart){
             res.status(404).json({ status: 'error', error: 'cart not found' })
         } else {

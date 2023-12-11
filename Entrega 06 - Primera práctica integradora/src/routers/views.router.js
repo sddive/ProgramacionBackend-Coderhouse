@@ -22,5 +22,10 @@ router.get('/realtimeproducts', async (req, res)=>{
     res.status(200).render('realtimeproducts', {title})
 })
 
+router.get('/chat', async (req, res)=>{
+    const title = 'Tienda online - Chat'      
+    res.status(200).render('chat', {title})
+})
+
 
 export default router

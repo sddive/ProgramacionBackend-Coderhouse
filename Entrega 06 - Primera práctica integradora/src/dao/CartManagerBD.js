@@ -9,30 +9,13 @@ export default class CartManager{
         this.path = path
     }
 
-    async getCarts(){
-        // try {
-        //     if (fs.existsSync(this.path)){
-        //         return JSON.parse(await fs.promises.readFile(this.path, 'utf-8'))
-        //     } else {
-        //         return []
-        //     }
-        // } catch (error) {
-        //     throw new Error('Error: ' + error.message)        
-        // }
-    }
-
     async getProductsToCart(id){
         try {
-        const cart = await cartModel.findOne({deleted:false, _id:id})
-        const products = cart.products
-        console.log(products)
-        //     let cartById = carts.find(cart=>cart.id===id)
-        //     if(!cartById){
-        //         return 
-        //     }
-        //     return cartById.products
+            const cart = await cartModel.findOne({deleted:false, _id:id})
+            const products = cart.products
+            return products
         } catch (error) {
-            throw new Error('Error: ' + error.message)        
+            throw new Error(error.message)        
         }
     }
 
@@ -47,33 +30,25 @@ export default class CartManager{
     }
 
     async addProduct(idCart, idProduct){
-        // try {
-        //     let carts = await this.getCarts()
-        //     let cartById = carts.find(cart=>cart.id===idCart)
-        //     if(!cartById){
-        //         return {}
-        //     }
-        //     let productManager = new ProductManager(__dirname + "/files/productos.json")
-        //     let productById = await productManager.getProductById(idProduct)
-        //     if(!productById){
-        //         throw new Error('Product not found')  
-        //     } else {
-        //         let productsInCart = cartById.products
-        //         let index = productsInCart.findIndex(p=>p.product == idProduct)
-        //         if (index === -1){
-        //             let newProduct = {
-        //                 product: idProduct, 
-        //                 quantity: 1
-        //             }
-        //             productsInCart.push(newProduct)
-        //         } else {
-        //             productsInCart[index].quantity += 1
-        //         }
-        //         await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 5))
-        //         return productsInCart
-        //     }
-        // } catch (error) {
-        //     throw new Error('Error: ' + error.message)        
-        // }
+        try {
+            const cart = await cartModel.findOne({deleted:false, _id:idCart})
+            if (!cart){
+                return
+            }
+            const product = await cartModel.findOne({deleted:false, _id:idCart, "products.product": idProduct})
+            let updateCart
+            if (!product){
+                const newProduct = {product: idProduct, quantity: 1}
+                updateCart = await cartModel.findOneAndUpdate({deleted:false, _id:idCart}, {$push: {products: newProduct}}, {new:true})
+            } else {
+                const quantity = await cartModel.findOne({deleted:false, _id:idCart, "products.product": idProduct}, 'products.$').lean()
+                let newQuantity = quantity.products[0].quantity + 1
+                updateCart = await cartModel.findOneAndUpdate({deleted:false, _id:idCart, "products.product": idProduct}, {$set: {"products.$.quantity": newQuantity}}, {new:true})
+            }
+            return updateCart
+        } catch (error) {
+            console.log(error.message)
+            throw new Error(error.message)        
+        }
     }
 }
