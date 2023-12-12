@@ -45,19 +45,18 @@ io.on('connection', socket=>{
     socket.on('id', async nombre=>{
         try {
             users.push({nombre, id:socket.id})
-            socket.broadcast.emit('nuevoUsuario',nombre)
+            socket.broadcast.emit('newUser',nombre)
             let messages = await messageManager.getMessages()
-            console.log(messages)
-            socket.emit("hello" ,messages)
+            socket.emit("allMessages" ,messages)
         } catch (error) {
             console.log(error.message)
         }
     })
 
-    socket.on('mensaje', async datos=>{
+    socket.on('message', async datos=>{
         try{
             let messages = await messageManager.addMessage(datos)
-            io.emit('nuevoMensaje', datos)
+            io.emit('newMessage', datos)
         } catch (error) {
             console.log(error.message)
         }
@@ -66,7 +65,7 @@ io.on('connection', socket=>{
     socket.on("disconnect",()=>{
         let user = users.find(u=>u.id===socket.id)
         if(user){
-            io.emit("usuarioDesconectado", user.nombre)
+            io.emit("userDisconnect", user.nombre)
         }
     })
 })
