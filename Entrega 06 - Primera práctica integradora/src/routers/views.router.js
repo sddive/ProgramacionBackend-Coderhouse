@@ -4,16 +4,15 @@ import __dirname from '../utils.js'
 import { io } from '../app.js'
 
 const router = Router()
-const productManager = new ProductManager(__dirname + "/files/productos.json")
+const productManager = new ProductManager()
 
 
 router.get('/', async (req, res)=>{
     const products = await productManager.getProducts()
     const title = 'Tienda online'
     if(products){
+        console.log(products)
         res.status(200).render('home', {title, products})
-    } else {
-
     }
 })
 

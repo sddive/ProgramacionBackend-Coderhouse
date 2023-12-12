@@ -5,7 +5,8 @@ import productsRouter from './routers/products.router.js'
 import cartsRouter from './routers/carts.router.js'
 import viewsRouter from './routers/views.router.js'
 import __dirname from './utils.js'
-import ProductManager from './dao/ProductManager.js'
+import ProductManager from './dao/ProductManagerBD.js'
+import MessageManager from './dao/MessageManagerBD.js'
 import mongoose from 'mongoose'
 
 const PORT = 8080
@@ -14,7 +15,9 @@ const server = app.listen(PORT, ()=>{
     console.log(`Server on line en puerto ${PORT}`)
 })
 
-let productManager = new ProductManager(__dirname + "/files/productos.json")
+let productManager = new ProductManager()
+let messageManager = new MessageManager()
+let users = []
 
 export const io = new Server(server)
 
@@ -23,7 +26,7 @@ app.use(express.urlencoded({extended:true}))
 
 app.engine('handlebars',engine())
 app.set('view engine','handlebars')
-app.set('views', './views')
+app.set('views', __dirname + '/views')
 app.use(express.static(__dirname + '/public'))
 
 app.use('/api/products/', productsRouter)
@@ -32,9 +35,39 @@ app.use('/', viewsRouter)
 
 io.on('connection', socket=>{
     console.log('cliente conectado')
+
     socket.on('getProducts', async ()=>{
         const products = await productManager.getProducts()
+        console.log(products)
         socket.emit('allProducts', products)
+    })
+    
+    socket.on('id', async nombre=>{
+        try {
+            users.push({nombre, id:socket.id})
+            socket.broadcast.emit('nuevoUsuario',nombre)
+            let messages = await messageManager.getMessages()
+            console.log(messages)
+            socket.emit("hello" ,messages)
+        } catch (error) {
+            console.log(error.message)
+        }
+    })
+
+    socket.on('mensaje', async datos=>{
+        try{
+            let messages = await messageManager.addMessage(datos)
+            io.emit('nuevoMensaje', datos)
+        } catch (error) {
+            console.log(error.message)
+        }
+    })
+
+    socket.on("disconnect",()=>{
+        let user = users.find(u=>u.id===socket.id)
+        if(user){
+            io.emit("usuarioDesconectado", user.nombre)
+        }
     })
 })
 

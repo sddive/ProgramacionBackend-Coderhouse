@@ -5,7 +5,7 @@ import { io } from '../app.js'
 import mongoose from "mongoose";
 
 const router = Router()
-let productManager = new ProductManager(__dirname + "/files/productos.json")
+let productManager = new ProductManager()
 
 router.get('/', async (req, res)=>{
     try {
