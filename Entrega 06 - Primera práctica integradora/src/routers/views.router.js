@@ -11,7 +11,6 @@ router.get('/', async (req, res)=>{
     const products = await productManager.getProducts()
     const title = 'Tienda online'
     if(products){
-        console.log(products)
         res.status(200).render('home', {title, products})
     }
 })

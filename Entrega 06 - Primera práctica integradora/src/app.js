@@ -38,7 +38,6 @@ io.on('connection', socket=>{
 
     socket.on('getProducts', async ()=>{
         const products = await productManager.getProducts()
-        console.log(products)
         socket.emit('allProducts', products)
     })
     
