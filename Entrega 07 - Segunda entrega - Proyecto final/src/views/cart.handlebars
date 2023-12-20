@@ -1,0 +1,16 @@
+<h2>Carrito</h2>
+<hr>
+
+{{#each products}} 
+    <div>
+        <p id={{this._id}}>
+            <strong>Producto: </strong>{{this.product.title}} - 
+            <strong>Cantidad: </strong>{{this.quantity}}
+        </p>
+    </div>
+{{/each}}
+
+<br><br>
+<a href="/">Home</a><br>
+<a href="/chat">Chat</a><br>
+<a href="/realTimeProducts">Real time products</a>
