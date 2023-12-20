@@ -27,9 +27,13 @@ router.get('/chat', async (req, res)=>{
 })
 
 router.get('/carts/:cid', async (req, res)=>{
-    const products = await cartManager.getProductsToCart(req.params.cid)
-    const title = 'Carrito'      
-    res.status(200).render('cart', {title, products})
+    try {
+        const products = await cartManager.getProductsToCart(req.params.cid)
+        const title = 'Carrito'      
+        res.status(200).render('cart', {title, products})
+    } catch (error){
+        res.status(500).json({ status: 'error', error: error.message })
+    }    
 })
 
 router.get('/products', async (req, res)=>{

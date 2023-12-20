@@ -37,7 +37,8 @@ io.on('connection', socket=>{
     console.log('cliente conectado')
 
     socket.on('getProducts', async ()=>{
-        const products = await productManager.getProducts()
+        const limit = Number.MAX_SAFE_INTEGER
+        const products = await productManager.getProducts(limit)
         socket.emit('allProducts', products.docs)
     })
     
