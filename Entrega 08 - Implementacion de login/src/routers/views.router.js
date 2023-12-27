@@ -44,6 +44,11 @@ router.get('/carts/:cid', async (req, res)=>{
 })
 
 router.get('/products', async (req, res)=>{
+    let user = {}
+    if(req.session.user){
+        user = req.session.user
+    }
+
     const {limit, page = 1, sort, category, status} = req.query
     let sortOption = {}
     if (sort === 'asc' || sort === 'ASC'){
@@ -60,10 +65,13 @@ router.get('/products', async (req, res)=>{
     }
     const products = await productManager.getProducts(limit, page, sortOption, query)
     const title = 'Productos'      
-    res.status(200).render('products', {title, products})
+    res.status(200).render('products', {title, user, products})
 })
 
 router.get('/login', (req, res)=>{
+    if (req.session.user){
+        return res.redirect('/products')
+    }
     const title = 'Login'   
     let {error, mensaje} = req.query   
     res.status(200).render('login', {title, error, mensaje})    
@@ -71,14 +79,8 @@ router.get('/login', (req, res)=>{
 
 router.get('/signup', (req, res)=>{
     const title = 'Registro'      
-    error
-    res.status(200).render('signup', {title})
-})
-
-router.get('/profile', auth, (req, res)=>{
-    const title = 'Perfil'  
-    let user = req.session.user    
-    res.status(200).render('profile', {title, user})
+    let {error} = req.query
+    res.status(200).render('signup', {error, title})
 })
 
 router.get('/logout',(req,res)=>{
@@ -88,6 +90,7 @@ router.get('/logout',(req,res)=>{
             return res.status(500).json({error:`Error inesperado en el servidor - Intente más tarde, o contacte a su administrador`})
         }
     })
+    res.redirect('/login')
 })
 
 export default router

@@ -13,6 +13,12 @@ router.post('/login', async(req, res)=>{
     }
 
     password = crypto.createHmac("sha256", "codercoder123").update(password).digest("hex")
+    if(email === 'adminCoder@coder.com' || password === 'adminCod3r123'){
+        req.session.user = {
+            name:'Admin coder', email:'adminCoder@coder.com', role: 'admin'
+        }
+        return res.redirect('/products')
+    }
 
     let user = await userModel.findOne({email, password})
     if(!user){
@@ -23,7 +29,7 @@ router.post('/login', async(req, res)=>{
         name:user.name, email:user.email, role:user.role
     }
 
-    res.redirect('/profile')
+    res.redirect('/products')
 
 })
 
@@ -31,18 +37,18 @@ router.post('/sigup',async(req,res)=>{
 
     let {name, email, password}=req.body
     if(!name || !email || !password){
-        return res.redirect('/registro?error=Complete todos los datos')
+        return res.redirect('/signup?error=Complete todos los datos')
     }
 
     let regMail=/^(([^<>()\[\]\\.,;:\s@”]+(\.[^<>()\[\]\\.,;:\s@”]+)*)|(“.+”))@((\[[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}])|(([a-zA-Z\-0–9]+\.)+[a-zA-Z]{2,}))$/
     console.log(regMail.test(email))
     if(!regMail.test(email)){
-        return res.redirect('/registro?error=Mail con formato incorrecto...!!!')
+        return res.redirect('/signup?error=Mail con formato incorrecto...!!!')
     }
 
     let existe = await userModel.findOne({email})
     if(existe){
-        return res.redirect(`/registro?error=Existen usuarios con email ${email} en la BD`)
+        return res.redirect(`/signup?error=Existen usuarios con email ${email} en la BD`)
     }
     
     password = crypto.createHmac("sha256", "codercoder123").update(password).digest("hex")
@@ -51,7 +57,7 @@ router.post('/sigup',async(req,res)=>{
         res.redirect(`/login?mensaje=Usuario ${email} registrado correctamente`)
         
     } catch (error) {
-        res.redirect('/registro?error=Error inesperado. Reintente en unos minutos')
+        res.redirect('/signup?error=Error inesperado. Reintente en unos minutos')
     }
 
 })

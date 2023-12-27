@@ -1,6 +1,14 @@
 <h2>Productos</h2>
 <hr>
 
+{{#if user.name}}
+    <p>Bienvenido <strong>{{user.name}}</strong> - Correo Electrónico: <strong>{{user.email}}</strong> - Rol: <strong>{{user.role}}</strong> 
+    </p>
+    <a href="/logout">Cerrar sesión</a><br>
+    <hr>
+{{/if}}
+
+
 <div>
     <ul>
         {{#each products.docs}}
