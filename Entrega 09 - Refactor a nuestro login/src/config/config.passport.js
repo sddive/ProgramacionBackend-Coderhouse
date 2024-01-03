@@ -16,7 +16,7 @@ export const initPassport=()=>{
                 let usuario=await userModel.findOne({email: profile._json.email})
                 if(!usuario){
                     let newUser={
-                        nombre: profile._json.name,
+                        name: profile._json.name,
                         email: profile._json.email, 
                         profile
                     }
@@ -31,7 +31,6 @@ export const initPassport=()=>{
             }
         }
     ))
-
 
     // serializador / deserializador
     passport.serializeUser((user, done)=>{

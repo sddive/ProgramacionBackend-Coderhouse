@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import __dirname from '../utils.js'
 import { userModel } from "../dao/models/user.model.js"
-import crypto from 'crypto'
+import { createHash, validPassword } from '../utils.js';
 import passport from 'passport'
 
 const router = Router()
@@ -13,16 +13,18 @@ router.post('/login', async(req, res)=>{
         return res.redirect('/login?error=Complete todos los datos')
     }
 
-    password = crypto.createHmac("sha256", "codercoder123").update(password).digest("hex")
-    if(email === 'adminCoder@coder.com' || password === 'adminCod3r123'){
+    if(email === 'adminCoder@coder.com' && password === 'adminCod3r123'){
         req.session.user = {
             name:'Admin coder', email:'adminCoder@coder.com', role: 'admin'
         }
         return res.redirect('/products')
     }
 
-    let user = await userModel.findOne({email, password})
+    let user = await userModel.findOne({email})
     if(!user){
+        return res.redirect(`/login?error=credenciales incorrectas`)
+    }
+    if(!validPassword(user, password)){
         return res.redirect(`/login?error=credenciales incorrectas`)
     }
     
@@ -52,7 +54,7 @@ router.post('/sigup',async(req,res)=>{
         return res.redirect(`/signup?error=Existen usuarios con email ${email} en la BD`)
     }
     
-    password = crypto.createHmac("sha256", "codercoder123").update(password).digest("hex")
+    password = createHash(password)
     try {
         const user = await userModel.create({name, email, password})
         res.redirect(`/login?mensaje=Usuario ${email} registrado correctamente`)
@@ -78,21 +80,12 @@ router.get('/logout',(req,res)=>{
 router.get('/github', passport.authenticate('github',{}), (req,res)=>{})
 
 router.get('/callbackGithub', passport.authenticate('github',{failureRedirect:"/api/sessions/errorGithub"}), (req,res)=>{
-    
-    console.log(req.user)
     req.session.user=req.user
-    res.setHeader('Content-Type','application/json');
-    res.status(200).json({
-        message:"Acceso OK...!!!", usuario: req.user
-    })
+    res.redirect('/products')
 })
 
 router.get('/errorGithub',(req,res)=>{
-    
-    res.setHeader('Content-Type','application/json');
-    res.status(200).json({
-        error: "Error al autenticar con Github"
-    })
+    return res.redirect(`/login?error=error al autenticar con GitHub`)
 })
 
 
