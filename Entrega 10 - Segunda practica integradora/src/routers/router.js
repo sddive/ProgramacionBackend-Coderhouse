@@ -14,7 +14,7 @@ export class MiRouter{
     }
 
     get(rute, permissions, ...functions){ // ... son aquí el operador rest, que alamacena los argumentos que lleguen en un array llamado functions
-        this.router.get(rute, this.myResponses, passportCall("current"), this.access(permissions), this.agregaTryCatch(functions))
+        this.router.get(rute, this.myResponses, (rute!=="/github" && rute!=="/callbackGithub")?passportCall("current"):(req,res,next)=>{next()}, this.access(permissions), this.agregaTryCatch(functions))
     }
 
     post(rute, permissions, ...functions){ // ... son aquí el operador rest, que alamacena los argumentos que lleguen en un array llamado functions

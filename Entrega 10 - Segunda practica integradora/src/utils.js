@@ -14,7 +14,6 @@ export const validPassword = (user, password)=>bcrypt.compareSync(password, user
 
 export const passportCall=(strategy)=>{
     return function(req, res, next) {
-      console.log(strategy)
         passport.authenticate(strategy, function(err, user, info, status) {
           if (err) { return next(err) }
           if (!user) {

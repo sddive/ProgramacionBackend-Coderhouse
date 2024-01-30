@@ -3,6 +3,7 @@ import local from 'passport-local'
 import passportJWT from 'passport-jwt'
 import github from 'passport-github2'
 import { userModel } from '../dao/models/user.model.js'
+import { cartModel } from '../dao/models/cart.model.js'
 import { SECRET_KEY, createHash, validPassword, decodeToken } from '../utils.js';
 import mongoose from "mongoose"
 
@@ -25,6 +26,7 @@ export const initPassport=()=>{
         },
         async (user, done)=>{
             try {
+                delete user.password
                 return done(null, user)
             } catch (error) {
                 return done(error)
@@ -58,7 +60,8 @@ export const initPassport=()=>{
                 password = createHash(password)
                 let user
                 try {
-                    user = await userModel.create({first_name, last_name, email, password})
+                    let cart = await cartModel.create({})
+                    user = await userModel.create({first_name, last_name, email, password, cart:cart._id})
                     // res.redirect(`/login?mensaje=Usuario ${email} registrado correctamente`)
                     return done(null, user)
                     // previo a devolver un usuario con done, passport graba en la req, una propiedad
@@ -119,12 +122,14 @@ export const initPassport=()=>{
         },
         async(accessToken, refreshToken, profile, done)=>{
             try {
-                // console.log(profile)
-                let usuario=await userModel.findOne({email: profile._json.email})
+                let usuario=await userModel.findOne({email: profile._json.email}).lean()
                 if(!usuario){
+
+                    let cart = await cartModel.create({})
                     let newUser={
                         first_name: profile._json.name,
                         email: profile._json.email, 
+                        cart: cart._id,
                         profile
                     }
 
@@ -138,4 +143,4 @@ export const initPassport=()=>{
         }
     ))
 
-} // fin initPassport
+}

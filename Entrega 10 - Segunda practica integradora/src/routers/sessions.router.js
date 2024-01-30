@@ -1,40 +1,39 @@
-import { Router } from 'express'
-import { generateToken } from '../utils.js'
-import passport from 'passport'
+import { MiRouter } from "./router.js"
+import { generateToken, passportCall } from "../utils.js"
 
-const router = Router()
+export class SessionsRouter extends MiRouter{
+    init(){
+        this.post("/signup", ["PUBLIC"], passportCall("signup"), (req,res)=>{
 
-router.post('/login', passport.authenticate('login',{session:false, failureRedirect:'/login?error=credenciales incorrectas'}), async(req, res)=>{    
-    let token=generateToken(req.user)
-    res.cookie('coderCookie', token, {httpOnly:true, maxAge: 1000*60*60})
-    return res.redirect('/products')
-})
+            return res.successAlta("Registro correcto...!!!", req.user)
+        })
 
-router.post('/signup', passport.authenticate('signup',{failureRedirect:'/signup?error=error al registrar, reintente nuevamente'}), async(req, res)=>{    
-    return res.redirect(`/login?mensaje=Usuario ${req.user.email} registrado correctamente`)
-})
+        this.post("/login", ["PUBLIC"], passportCall("login"), (req,res)=>{
+            let token=generateToken(req.user)
+            res.cookie("coderCookie", token, {httpOnly:true, maxAge: 1000*60*60})
+            return res.success(`Login correcto para el usuario ${req.user.first_name} ${req.user.last_name} , con rol: ${req.user.role}`)
+        })
 
-router.get('/logout',(req,res)=>{    
-    res.clearCookie('coderCookie')
-    return res.redirect('/login')
-})
+        this.get("/current", ["PUBLIC"], passportCall("current"), (req,res)=>{
+            let current = req.user
+            return res.success(current)
+        })
 
-router.get('/github', passport.authenticate('github',{session:false}), (req,res)=>{})
-
-router.get('/callbackGithub', passport.authenticate('github',{session:false, failureRedirect:"/api/sessions/errorGithub"}), (req,res)=>{
-    let token=generateToken(req.user)
-    res.cookie("coderCookie", token, {httpOnly:true, maxAge: 1000*60*60})
-    return res.redirect('/products')
-})
-
-router.get('/errorGithub',(req,res)=>{
-    return res.redirect(`/login?error=error al autenticar con GitHub`)
-})
-
-router.get('/current', passport.authenticate('current',{session:false, failureRedirect:'/login?error=credenciales incorrectas'}), async(req, res)=>{    
-    console.log(req.user)
-    res.status(200).json({status:"OK", current: req.user})
-})
-
-
-export default router
+        this.get('/logout',["PUBLIC"], (req,res)=>{    
+            res.clearCookie('coderCookie')
+            return res.success('Se realizo el logout correctamente.')
+        })
+        
+        this.get('/github', ["PUBLIC"], passportCall('github'), (req,res)=>{})
+        
+        this.get('/callbackGithub', ["PUBLIC"], passportCall('github'), (req,res)=>{
+            let token=generateToken(req.user)
+            res.cookie("coderCookie", token, {httpOnly:true, maxAge: 1000*60*60})
+            return res.success(`Login correcto para el usuario ${req.user.first_name}, con rol: ${req.user.role}`)
+        })
+        
+        this.get('/errorGithub', ["PUBLIC"], (req,res)=>{
+            return res.redirect(`/login?error=error al autenticar con GitHub`)
+        })
+    }
+}

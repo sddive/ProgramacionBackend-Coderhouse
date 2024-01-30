@@ -1,7 +1,6 @@
 import express from 'express'
 import { engine } from 'express-handlebars'
 import { Server } from 'socket.io'
-import sessionsRouter from './routers/sessions.router.js'
 import productsRouter from './routers/products.router.js'
 import cartsRouter from './routers/carts.router.js'
 import viewsRouter from './routers/views.router.js'
@@ -12,7 +11,7 @@ import mongoose from 'mongoose'
 import { initPassport } from './config/config.passport.js';
 import passport from 'passport';
 import cookieParser from 'cookie-parser'
-import { SessionsRouter1 } from './routers/sessions1.router.js';
+import { SessionsRouter } from './routers/sessions.router.js';
 
 const PORT = 8080
 const app = express()
@@ -35,10 +34,9 @@ initPassport()
 app.use(passport.initialize())
 app.use(cookieParser())
 
-const sessionsRouter1 = new SessionsRouter1()
+const sessionsRouter = new SessionsRouter()
 
-app.use('/api/sessions1/', sessionsRouter1.getRouter())
-app.use('/api/sessions/', sessionsRouter)
+app.use('/api/sessions/', sessionsRouter.getRouter())
 app.use('/api/products/', productsRouter)
 app.use('/api/carts/', cartsRouter)
 app.use('/', viewsRouter)
