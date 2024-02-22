@@ -4,7 +4,8 @@ import passportJWT from 'passport-jwt'
 import github from 'passport-github2'
 import { userModel } from '../dao/models/user.model.js'
 import { cartModel } from '../dao/models/cart.model.js'
-import { SECRET_KEY, createHash, validPassword, decodeToken } from '../utils.js';
+import { createHash, validPassword } from '../utils.js'
+import { config } from './config.dotenv.js'
 import mongoose from "mongoose"
 
 
@@ -21,7 +22,7 @@ export const initPassport=()=>{
 
     passport.use('current', new passportJWT.Strategy(
         {
-            secretOrKey: SECRET_KEY,
+            secretOrKey: config.SECRET_KEY,
             jwtFromRequest: passportJWT.ExtractJwt.fromExtractors([searchToken])
         },
         async (user, done)=>{
@@ -116,8 +117,8 @@ export const initPassport=()=>{
 
     passport.use('github', new github.Strategy(
         {
-            clientID: "Iv1.196c0c1838a16816", 
-            clientSecret: "548ffeb491a76899bcda4e2423c1e4f929c084d3", 
+            clientID: config.clientID, 
+            clientSecret: config.clientSecret, 
             callbackURL: "http://localhost:8080/api/sessions/callbackGithub", 
         },
         async(accessToken, refreshToken, profile, done)=>{

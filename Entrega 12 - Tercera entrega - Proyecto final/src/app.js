@@ -5,15 +5,18 @@ import productsRouter from './routers/products.router.js'
 import cartsRouter from './routers/carts.router.js'
 import viewsRouter from './routers/views.router.js'
 import __dirname from './utils.js'
-import ProductManager from './dao/ProductManagerBD.js'
 import MessageManager from './dao/MessageManagerBD.js'
 import mongoose from 'mongoose'
 import { initPassport } from './config/config.passport.js';
 import passport from 'passport';
 import cookieParser from 'cookie-parser'
-import { SessionsRouter } from './routers/sessions.router.js';
+import sessionsRouter from './routers/sessions.router.js';
+import { config } from './config/config.dotenv.js'
+import { productService } from './services/product.services.js'
+//import { message}
 
-const PORT = 8080
+
+const PORT = config.PORT
 const app = express()
 const server = app.listen(PORT, ()=>{
     console.log(`Server on line en puerto ${PORT}`)
@@ -34,14 +37,11 @@ initPassport()
 app.use(passport.initialize())
 app.use(cookieParser())
 
-const sessionsRouter = new SessionsRouter()
-
-app.use('/api/sessions/', sessionsRouter.getRouter())
+app.use('/api/sessions/', sessionsRouter)
 app.use('/api/products/', productsRouter)
 app.use('/api/carts/', cartsRouter)
 app.use('/', viewsRouter)
 
-let productManager = new ProductManager()
 let messageManager = new MessageManager()
 let users = []
 
@@ -50,7 +50,7 @@ io.on('connection', socket=>{
 
     socket.on('getProducts', async ()=>{
         const limit = Number.MAX_SAFE_INTEGER
-        const products = await productManager.getProducts(limit)
+        const products = await productService.getProducts(limit)
         socket.emit('allProducts', products.docs)
     })
     
@@ -83,7 +83,7 @@ io.on('connection', socket=>{
 })
 
 try {
-    await mongoose.connect('mongodb+srv://sergiodivenutoq:Coder23.@codersdivenuto.mlve65q.mongodb.net/?retryWrites=true&w=majority', {dbname:'ecommerce'})
+    await mongoose.connect(config.mongo_URL, {dbname:config.dbName})
     console.log('DB Online...!!!')
 } catch (error) {
     console.log(error)

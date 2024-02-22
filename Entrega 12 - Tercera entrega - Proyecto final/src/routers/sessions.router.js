@@ -1,39 +1,16 @@
-import { MiRouter } from "./router.js"
-import { generateToken, passportCall } from "../utils.js"
+import { Router } from 'express'
+import passport from 'passport'
+import SessionsController from '../controllers/sessions.controller.js'
 
-export class SessionsRouter extends MiRouter{
-    init(){
-        this.post("/signup", ["PUBLIC"], passportCall("signup"), (req,res)=>{
+const router = Router()
+const sessionController = new SessionsController()
 
-            return res.successAlta("Registro correcto...!!!", req.user)
-        })
+router.post('/login', passport.authenticate('login',{failureRedirect:'/login?error=credenciales incorrectas', session: false}), sessionController.login)
+router.post('/signup', passport.authenticate('signup',{failureRedirect:'/signup?error=error al registrar, reintente nuevamente', session: false}), sessionController.signup)
+router.get('/logout',sessionController.logout)
+router.get('/github', passport.authenticate('github',{session: false}), sessionController.github)
+router.get('/callbackGithub', passport.authenticate('github',{failureRedirect:'/api/sessions/errorGithub', session: false}), sessionController.callbackGithub)
+router.get('/errorGithub', sessionController.errorGithub)
+router.get("/current", passport.authenticate('current',{session: false}), sessionController.current)
 
-        this.post("/login", ["PUBLIC"], passportCall("login"), (req,res)=>{
-            let token=generateToken(req.user)
-            res.cookie("coderCookie", token, {httpOnly:true, maxAge: 1000*60*60})
-            return res.success(`Login correcto para el usuario ${req.user.first_name} ${req.user.last_name} , con rol: ${req.user.role}`)
-        })
-
-        this.get("/current", ["PUBLIC"], passportCall("current"), (req,res)=>{
-            let current = req.user
-            return res.success(current)
-        })
-
-        this.get('/logout',["PUBLIC"], (req,res)=>{    
-            res.clearCookie('coderCookie')
-            return res.success('Se realizo el logout correctamente.')
-        })
-        
-        this.get('/github', ["PUBLIC"], passportCall('github'), (req,res)=>{})
-        
-        this.get('/callbackGithub', ["PUBLIC"], passportCall('github'), (req,res)=>{
-            let token=generateToken(req.user)
-            res.cookie("coderCookie", token, {httpOnly:true, maxAge: 1000*60*60})
-            return res.success(`Login correcto para el usuario ${req.user.first_name}, con rol: ${req.user.role}`)
-        })
-        
-        this.get('/errorGithub', ["PUBLIC"], (req,res)=>{
-            return res.redirect(`/login?error=error al autenticar con GitHub`)
-        })
-    }
-}
+export default router
