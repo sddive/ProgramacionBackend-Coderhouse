@@ -5,7 +5,6 @@ import productsRouter from './routers/products.router.js'
 import cartsRouter from './routers/carts.router.js'
 import viewsRouter from './routers/views.router.js'
 import __dirname from './utils.js'
-import MessageManager from './dao/MessageManagerBD.js'
 import mongoose from 'mongoose'
 import { initPassport } from './config/config.passport.js';
 import passport from 'passport';
@@ -13,7 +12,7 @@ import cookieParser from 'cookie-parser'
 import sessionsRouter from './routers/sessions.router.js';
 import { config } from './config/config.dotenv.js'
 import { productService } from './services/product.services.js'
-//import { message}
+import { messageService } from './services/message.service.js'
 
 
 const PORT = config.PORT
@@ -42,7 +41,6 @@ app.use('/api/products/', productsRouter)
 app.use('/api/carts/', cartsRouter)
 app.use('/', viewsRouter)
 
-let messageManager = new MessageManager()
 let users = []
 
 io.on('connection', socket=>{
@@ -58,7 +56,7 @@ io.on('connection', socket=>{
         try {
             users.push({nombre, id:socket.id})
             socket.broadcast.emit('newUser',nombre)
-            let messages = await messageManager.getMessages()
+            let messages = await messageService.getMessages()
             socket.emit("allMessages" ,messages)
         } catch (error) {
             console.log(error.message)
@@ -67,7 +65,7 @@ io.on('connection', socket=>{
 
     socket.on('message', async datos=>{
         try{
-            let messages = await messageManager.addMessage(datos)
+            let messages = await messageService.addMessage(datos)
             io.emit('newMessage', datos)
         } catch (error) {
             console.log(error.message)
