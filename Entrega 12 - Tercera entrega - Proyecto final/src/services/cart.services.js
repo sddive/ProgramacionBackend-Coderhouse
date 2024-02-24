@@ -8,7 +8,7 @@ class CartService {
 
     async addCart(){
         try {
-            return this.cartDAO.create(id)    
+            return await this.cartDAO.create()    
         } catch (error) {
             console.log(error.message)
             throw new Error(error.message)  
@@ -26,7 +26,8 @@ class CartService {
 
     async addProduct(idCart, idProduct){
         try {
-            return this.cartDAO.addProduct(idCart, idProduct)
+            let cart = await this.cartDAO.addProduct(idCart, idProduct)
+            return cart
         } catch (error) {
             console.log(error.message)
             throw new Error(error.message)        
@@ -35,7 +36,7 @@ class CartService {
 
     async updateProduct(idCart, idProduct, newQuantity){
         try {
-            return this.cartDAO.updateProduct(idCart, idProduct, newQuantity)
+            return await this.cartDAO.updateProduct(idCart, idProduct, newQuantity)
         } catch (error) {
             console.log(error.message)
             throw new Error(error.message)        
@@ -44,7 +45,7 @@ class CartService {
 
     async updateAllProducts(idCart, newProducts){
         try {
-            return this.cartDAO.updateAllProducts(idCart, newProducts)
+            return await this.cartDAO.updateAllProducts(idCart, newProducts)
         } catch (error) {
             console.log(error.message)
             throw new Error(error.message)        
@@ -53,7 +54,7 @@ class CartService {
 
     async deleteProduct(idCart, idProduct){
         try {
-            return this.cartDAO.deleteProduct(idCart, idProduct)
+            return await this.cartDAO.deleteProduct(idCart, idProduct)
         } catch (error) {
             console.log(error.message)
             throw new Error(error.message)        
@@ -62,7 +63,7 @@ class CartService {
 
     async deleteAllProduct(idCart){
         try {
-            return this.cartDAO.deleteAllProduct(idCart)
+            return await this.cartDAO.deleteAllProduct(idCart)
         } catch (error) {
             console.log(error.message)
             throw new Error(error.message)        

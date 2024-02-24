@@ -1,6 +1,5 @@
 export const access = (permisos=[])=>{
     return function(req, res, next){
-        // pasar los permisos todo a Upper Case
         if(permisos.includes("PUBLIC")){
             return next()
         }
@@ -10,7 +9,7 @@ export const access = (permisos=[])=>{
             return res.status(401).json({error:`Error autenticacion. No estas logueado...!!!`})
         }
 
-        if(!permisos.includes(req.user.rol.toUpperCase())){
+        if(!permisos.includes(req.user.role.toLowerCase())){
             res.setHeader('Content-Type','application/json');
             return res.status(403).json({error:`No tiene permisos para el recurso`})
         }

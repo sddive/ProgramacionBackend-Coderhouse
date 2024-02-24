@@ -41,7 +41,7 @@ export default class Product{
                 return { error: 'Product not found' }
             }
             const productsByCode = await productModel.find({deleted:false, code: object.code})
-            if (productsByCode.length > 0){
+            if (productsByCode.length > 1){
                 console.log('The code already exists')
                 return {error: 'The code already exists'}    
             }     

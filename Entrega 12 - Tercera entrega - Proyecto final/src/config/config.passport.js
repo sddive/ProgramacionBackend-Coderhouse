@@ -2,12 +2,14 @@ import passport from 'passport'
 import local from 'passport-local'
 import passportJWT from 'passport-jwt'
 import github from 'passport-github2'
-import { userModel } from '../dao/models/user.model.js'
-import { cartModel } from '../dao/models/cart.model.js'
 import { createHash, validPassword } from '../utils.js'
 import { config } from './config.dotenv.js'
 import mongoose from "mongoose"
+import UserDTO from '../dto/user.dto.js'
+import User from '../dao/classes/user.dao.js'
+import { cartService } from '../services/cart.services.js'
 
+const userDAO = new User()
 
 const searchToken=(req)=>{
     let token=null
@@ -27,8 +29,8 @@ export const initPassport=()=>{
         },
         async (user, done)=>{
             try {
-                delete user.password
-                return done(null, user)
+                let userDTO = new UserDTO(user)
+                return done(null, userDTO)
             } catch (error) {
                 return done(error)
             }
@@ -53,7 +55,7 @@ export const initPassport=()=>{
                     return done(null, false)
                 }
             
-                let existe = await userModel.findOne({email})
+                let existe = await userDAO.getByEmail(email)
                 if(existe){
                     return done(null, false)
                 }
@@ -61,10 +63,11 @@ export const initPassport=()=>{
                 password = createHash(password)
                 let user
                 try {
-                    let cart = await cartModel.create({})
-                    user = await userModel.create({first_name, last_name, email, password, cart:cart._id})
+                    let cart = await cartService.addCart()
+                    user = await userDAO.create({first_name, last_name, email, password, cart:cart._id})
                     // res.redirect(`/login?mensaje=Usuario ${email} registrado correctamente`)
-                    return done(null, user)
+                    let userDTO = new UserDTO(user)
+                    return done(null, userDTO)
                     // previo a devolver un usuario con done, passport graba en la req, una propiedad
                     // user, con los datos del usuario. Luego podré hacer req.user
                 } catch (error) {
@@ -91,10 +94,11 @@ export const initPassport=()=>{
                 if(username === 'adminCoder@coder.com' && password === 'adminCod3r123'){
                     console.log('entre al admin')
                     user = {_id: new mongoose.Types.ObjectId(), first_name:'Admin', last_name:'Coder',  email:'adminCoder@coder.com', role: 'admin'}
-                    return done(null, user)
+                    let userDTO = new UserDTO(user)
+                    return done(null, userDTO)
                 }
 
-                user = await userModel.findOne({email:username}).lean()
+                user = await userDAO.getByEmail(username)
                 if(!user){
                     return done(null, false)
                 }
@@ -103,8 +107,8 @@ export const initPassport=()=>{
                 }     
 
                 //console.log(Object.keys(user))
-                delete user.password
-                return done(null, user)
+                let userDTO = new UserDTO(user)
+                return done(null, userDTO)
                     // previo a devolver un usuario con done, passport graba en la req, una propiedad
                     // user, con los datos del usuario. Luego podré hacer req.user
 
@@ -123,10 +127,10 @@ export const initPassport=()=>{
         },
         async(accessToken, refreshToken, profile, done)=>{
             try {
-                let usuario=await userModel.findOne({email: profile._json.email}).lean()
-                if(!usuario){
+                let user = await userDAO.getByEmail(profile._json.email)
+                if(!user){
 
-                    let cart = await cartModel.create({})
+                    let cart = await cartService.addCart()
                     let newUser={
                         first_name: profile._json.name,
                         email: profile._json.email, 
@@ -134,9 +138,10 @@ export const initPassport=()=>{
                         profile
                     }
 
-                    usuario=await userModel.create(newUser)
+                    user = await userDAO.create(newUser)
                 }
-                return done(null, usuario)
+                let userDTO = new UserDTO(user)
+                return done(null, userDTO)
 
             } catch (error) {
                 return done(error)

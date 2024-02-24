@@ -1,4 +1,6 @@
 import {cartService} from "../services/cart.services.js";
+import { productService } from "../services/product.services.js";
+import { ticketService } from "../services/ticket.services.js";
 
 export default class CartController {
 
@@ -96,6 +98,50 @@ export default class CartController {
             } else {
                 res.status(200).json({ status: 'success', message: 'cart empty successfully' })
             }        
+        } catch (error) {
+            res.status(500).json({ status: 'error', error: error.message })
+        }
+    }
+
+    async purchaseCart(req, res){
+        res.setHeader('Content-Type','application/json')
+        try {
+            let {email, cart} = req.user
+            if (cart !== req.params.cid){
+                return res.status(404).json({ status: 'error', error: 'Only the user can make the purchase from their cart' })
+            }
+
+            let productsToCart = await cartService.getProductsToCart(req.params.cid)
+            if (productsToCart.length == 0){
+                return res.status(404).json({ status: 'error', error: 'cart is empty' })
+            }
+
+            let productInCart, quantity, productInStore, updateProduct, ticket
+            let amount = 0
+            let newProductCart = []
+            for (let i = 0; i < productsToCart.length; i++) {
+                productInCart = productsToCart[i].product._id
+                quantity = productsToCart[i].quantity
+                productInStore = await productService.getProductById(productInCart)
+                if (productInStore){
+                    if (productInStore.stock >= quantity){
+                        amount += productInStore.price * quantity
+                        productInStore.stock -= quantity
+                        updateProduct = await productService.updateProduct(productInCart, {stock: productInStore.stock})
+                    } else {
+                        newProductCart.push({product: productInCart, quantity})
+                    }
+                }
+            }
+
+            console.log(newProductCart)
+            if(amount > 0){
+                ticket = await ticketService.createTicket({amount, purchaser:email})
+                let updateCart = await cartService.updateAllProducts(req.params.cid, newProductCart)
+                res.status(200).json({ status: 'success', message: 'Purchase completed!', ticket, productsWithInsufficientStock: newProductCart})
+            } else {
+                res.status(404).json({ status: 'error', message: 'Purchase not completed'})
+            }
         } catch (error) {
             res.status(500).json({ status: 'error', error: error.message })
         }

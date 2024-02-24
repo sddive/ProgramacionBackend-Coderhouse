@@ -14,7 +14,8 @@
         {{#each products.docs}}
             <li>
                 <strong>{{this.title}}</strong>
-                <button type='button' onclick="addtoCart('{{this.id}}')">Agregar al carrito</button>
+                    <button type='button' onclick="addtoCart('{{this.id}}')">Agregar al carrito {{user.email}}
+                    </button>
             </li>
         {{/each}}
     </ul>
@@ -37,6 +38,9 @@
 <a href="/">Home</a><br>
 <a href="/chat">Chat</a><br>
 <a href="/realTimeProducts">Real time products</a><br>
-<a href="/carts/657128616f2822768850acd1">Cart - 657128616f2822768850acd1 (default)</a>
-
+{{#if user.cart}}
+    <a href="/carts/{{user.cart}}">Cart - {{user.cart}}</a>
+{{/if}}
 <script src="/js/products.js"></script>
+
+<script>window.cartId = '{{user.cart}}'</script>
