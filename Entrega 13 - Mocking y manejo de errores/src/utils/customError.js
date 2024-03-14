@@ -1,8 +1,7 @@
-export default class CustomError{
-    static CustomError(name, message, statusCode, description=""){
-        let error = new Error(message)
-        error.name = name
-        error.codigo = statusCode
+export class CustomError extends Error {
+    constructor(message, code, description=""){
+        super(message)
+        error.code = code
         error.description = description
 
         return error

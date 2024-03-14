@@ -1,6 +1,9 @@
-import {cartService} from "../services/cart.services.js";
+import { cartService } from "../services/cart.services.js";
 import { productService } from "../services/product.services.js";
 import { ticketService } from "../services/ticket.services.js";
+import { CustomError } from "../utils/customError.js";
+import { STATUS_CODES } from "../utils/codeError.js";
+import { errorHandler } from "../middleware/errorHandler.js";
 
 export default class CartController {
 
@@ -9,12 +12,14 @@ export default class CartController {
         try {
             let cart = await cartService.addCart()
             if (Object.entries(cart).length === 0){
-                res.status(404).json({ status: 'error', error: 'cart not found' })
+                throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'cart could not be created')
+                //res.status(404).json({ status: 'error', error: 'cart not found' })
             } else {
                 res.status(200).json({ status: 'success', error: `cart ${cart.id} created` })
             } 
         } catch (error) {
-            res.status(500).json({ status: 'error', error: error.message })
+            errorHandler(error, req, res)
+            //res.status(500).json({ status: 'error', error: error.message })
         }  
     }
     
@@ -24,12 +29,14 @@ export default class CartController {
             let idCart = req.params.cid
             let productsToCart = await cartService.getProductsToCart(idCart)
             if (!productsToCart){
-                res.status(404).json({ status: 'error',  error: 'cart not found' })
+                throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
+                //res.status(404).json({ status: 'error',  error: 'cart not found' })
             } else {
                 res.status(200).json({products: productsToCart})
             }        
         } catch (error) {
-            res.status(500).json({ status: 'errorCONTR', error: error.message })
+            errorHandler(error, req, res)
+            //res.status(500).json({ status: 'errorCONTR', error: error.message })
         }
     }
     
@@ -38,6 +45,7 @@ export default class CartController {
         try {
             const cart = await cartService.addProduct(req.params.cid, req.params.pid)
             if (!cart){
+                throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
                 res.status(404).json({ status: 'error', error: 'cart not found' })
             } else {
                 res.status(200).json({ status: 'success', message: 'product added to cart successfully' })
@@ -52,6 +60,7 @@ export default class CartController {
         try {
             const cart = await cartService.updateProduct(req.params.cid, req.params.pid, parseInt(req.body.quantity))
             if (!cart){
+                throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
                 res.status(404).json({ status: 'error', error: 'cart not found' })
             } else {
                 res.status(200).json({ status: 'success', message: 'quantity updated successfully' })
@@ -66,6 +75,7 @@ export default class CartController {
         try {
             const cart = await cartService.updateAllProducts(req.params.cid, req.body.products)
             if (!cart){
+                throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
                 res.status(404).json({ status: 'error', error: 'cart not found' })
             } else {
                 res.status(200).json({ status: 'success', message: 'cart update successfully' })
@@ -80,6 +90,7 @@ export default class CartController {
         try {
             const cart = await cartService.deleteProduct(req.params.cid, req.params.pid)
             if (!cart){
+                throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
                 res.status(404).json({ status: 'error', error: 'cart not found' })
             } else {
                 res.status(200).json({ status: 'success', message: 'product deleted to cart successfully' })
@@ -94,6 +105,7 @@ export default class CartController {
         try {
             const cart = await cartService.deleteAllProduct(req.params.cid)
             if (!cart){
+                throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
                 res.status(404).json({ status: 'error', error: 'cart not found' })
             } else {
                 res.status(200).json({ status: 'success', message: 'cart empty successfully' })
@@ -108,7 +120,8 @@ export default class CartController {
         try {
             let {email, cart} = req.user
             if (cart !== req.params.cid){
-                return res.status(404).json({ status: 'error', error: 'Only the user can make the purchase from their cart' })
+                throw new CustomError('cart not found', STATUS_CODES.ERROR_AUTORIZACION, 'Only the user can make the purchase from their cart')
+                //return res.status(404).json({ status: 'error', error: 'Only the user can make the purchase from their cart' })
             }
 
             let productsToCart = await cartService.getProductsToCart(req.params.cid)
