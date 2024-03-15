@@ -16,5 +16,5 @@ Argumentos opcionales:
 - thumbnail: [String]
 
 Argumentos recibidos:
-`
+${JSON.stringify(otros)}`
 }

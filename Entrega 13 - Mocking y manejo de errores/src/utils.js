@@ -11,8 +11,12 @@ const __dirname = dirname(__filename);
 const SECRET_KEY = config.SECRET_KEY
 
 export const createHash = (password)=>bcrypt.hashSync(password, bcrypt.genSaltSync(10))
-export const validPassword = (user, password)=>bcrypt.compareSync(password, user.password)
-
+export const validPassword = (user, password)=>{
+  if (password && user.password){
+    return bcrypt.compareSync(password, user.password)
+  }
+  return false
+}
 export const passportCall=(strategy)=>{
     return function(req, res, next) {
         passport.authenticate(strategy, function(err, user, info, status) {

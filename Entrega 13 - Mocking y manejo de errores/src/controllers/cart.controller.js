@@ -4,6 +4,7 @@ import { ticketService } from "../services/ticket.services.js";
 import { CustomError } from "../utils/customError.js";
 import { STATUS_CODES } from "../utils/codeError.js";
 import { errorHandler } from "../middleware/errorHandler.js";
+import mongoose from "mongoose";
 
 export default class CartController {
 
@@ -25,6 +26,9 @@ export default class CartController {
         res.setHeader('Content-Type','application/json')
         try {
             let idCart = req.params.cid
+            if(!mongoose.Types.ObjectId.isValid(idCart)){
+                throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
+            }
             let productsToCart = await cartService.getProductsToCart(idCart)
             if (!productsToCart){
                 throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
@@ -39,7 +43,14 @@ export default class CartController {
     async addProduct (req, res){
         res.setHeader('Content-Type','application/json')
         try {
-            const cart = await cartService.addProduct(req.params.cid, req.params.pid)
+            const {cid, pid} = req.params
+            if(!mongoose.Types.ObjectId.isValid(cid)){
+                throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
+            }
+            if(!mongoose.Types.ObjectId.isValid(pid)){
+                throw new CustomError('product not found', STATUS_CODES.NOT_FOUND, 'The product does not exist, enter a valid one')
+            }
+            const cart = await cartService.addProduct(cid, pid)
             if (!cart){
                 throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
             } else {

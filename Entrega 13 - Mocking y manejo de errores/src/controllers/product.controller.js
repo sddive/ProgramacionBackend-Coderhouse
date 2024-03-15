@@ -80,10 +80,9 @@ export default class ProductController {
             }
 
             const fieldsNewProduct = Object.keys(newProduct)
-            for (const fieldNew of fieldsNewProduct) {
-                if (!validFields[fieldNew]) {
-                    throw new CustomError(`the field  ${field} is not valid`, STATUS_CODES.ERROR_ARGUMENTOS, errorArgumentos(newProduct))
-                }
+            const validFieldsNewProduct = fieldsNewProduct.every(key => validFields.includes(key));
+            if (!validFieldsNewProduct) {
+                throw new CustomError(`the field ${fieldNew} is not valid`, STATUS_CODES.ERROR_ARGUMENTOS, errorArgumentos(newProduct))
             }
 
             let result = await productService.addProduct(newProduct)
