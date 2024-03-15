@@ -2,6 +2,8 @@ import { productService } from "../services/product.services.js";
 import { io } from '../app.js'
 import { errorHandler } from "../middleware/errorHandler.js";
 import { STATUS_CODES } from "../utils/codeError.js";
+import { errorArgumentos } from "../utils/errors.js";
+import { CustomError } from "../utils/customError.js";
 
 export default class ProductController {
 
@@ -68,6 +70,22 @@ export default class ProductController {
     async addProduct(req, res){
         try {
             let newProduct = req.body
+            const requiredFields = ['title', 'description', 'price', 'code', 'stock', 'category', 'status']
+            const validFields = ['title', 'description', 'price', 'thumbnails', 'code', 'stock', 'category', 'status', 'deleted']
+
+            for (const field of requiredFields) {
+                if (!newProduct[field]) {
+                    throw new CustomError(`the field ${field} is required`, STATUS_CODES.ERROR_ARGUMENTOS, errorArgumentos(newProduct))
+                }
+            }
+
+            const fieldsNewProduct = Object.keys(newProduct)
+            for (const fieldNew of fieldsNewProduct) {
+                if (!validFields[fieldNew]) {
+                    throw new CustomError(`the field  ${field} is not valid`, STATUS_CODES.ERROR_ARGUMENTOS, errorArgumentos(newProduct))
+                }
+            }
+
             let result = await productService.addProduct(newProduct)
             res.setHeader('Content-Type','application/json')
             if (result.hasOwnProperty('error')){

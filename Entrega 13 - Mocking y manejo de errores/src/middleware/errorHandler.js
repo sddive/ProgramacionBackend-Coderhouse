@@ -6,7 +6,7 @@ export const errorHandler = (error, req, res, next)=>{
             console.log(`CustomError detectado: (${error.code}) - ${error.name}`)
             res.setHeader('Content-Type','application/json');
             return res.status(error.code).json({
-                error:`${error.name}: ${error.message}`,
+                error:`${error.message}`,
                 message: error.description?error.description:"Error inesperado en el servidor - Intente más tarde, o contacte a su administrador"
             })
         } else {
