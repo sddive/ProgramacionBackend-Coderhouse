@@ -1,4 +1,5 @@
 import { generateProduct } from "../mocks/products.mocks.js"
+import { errorHandler } from "../middleware/errorHandler.js"
 
 export default class MockController {
 
@@ -11,7 +12,7 @@ export default class MockController {
             }
             res.status(200).json({ status: 'success', payload: products })
         } catch (error) {
-            res.status(500).json({ status: 'error', error: error.message })
+            errorHandler(error, req, res)
         }  
     }
 }

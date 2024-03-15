@@ -1,5 +1,7 @@
 import { productService } from "../services/product.services.js";
 import { io } from '../app.js'
+import { errorHandler } from "../middleware/errorHandler.js";
+import { STATUS_CODES } from "../utils/codeError.js";
 
 export default class ProductController {
 
@@ -40,7 +42,7 @@ export default class ProductController {
                 totalPages, prevPage, nextPage, page: parseInt(page), hasPrevPage, hasNextPage, prevLink, nextLink
             })
         } catch (error) {
-            res.status(500).json({ status: 'error', error: error.message })
+            errorHandler(error, req, res)
         }
     }
     
@@ -54,12 +56,12 @@ export default class ProductController {
             let product = await productService.getProductById(idProduct)
             res.setHeader('Content-Type','application/json');
             if (product.hasOwnProperty('error')){
-                res.status(404).json({ status: 'error', error: 'product not found' });
+                throw new CustomError('product not found', STATUS_CODES.NOT_FOUND, 'The product does not exist, enter a valid one')
             } else {
                 res.status(200).json(product);
             } 
         } catch (error) {
-            res.status(500).json({ status: 'error', error: error.message })
+            errorHandler(error, req, res)
         }
     }
     
@@ -69,13 +71,13 @@ export default class ProductController {
             let result = await productService.addProduct(newProduct)
             res.setHeader('Content-Type','application/json')
             if (result.hasOwnProperty('error')){
-                res.status(400).json({status: 'error', result})
+                throw new CustomError('error in product arguments', STATUS_CODES.ERROR_ARGUMENTOS, 'Review the arguments sent to create the product.')
             } else {
                 io.emit('newProduct', result)            
                 res.status(200).json({ status: 'success', message: 'product added successfully' })
             } 
         } catch (error) {
-            res.status(500).json({ status: 'error', error: error.message })
+            errorHandler(error, req, res)
         }   
     }
     
@@ -86,12 +88,12 @@ export default class ProductController {
             let result = await productService.updateProduct(idProduct, updateProduct)
             res.setHeader('Content-Type','application/json');
             if (result.hasOwnProperty('error')){
-                res.status(400).json( {status: 'error', result} );
+                throw new CustomError('error in product arguments', STATUS_CODES.ERROR_ARGUMENTOS, 'Review the arguments sent to create the product.')
             } else {
                 res.status(200).json( {status: 'success', message: 'product successfully updated'} );
             } 
         } catch (error) {
-            res.status(500).json({ status: 'error', error: error.message })
+            errorHandler(error, req, res)
         }  
     }
     
@@ -105,7 +107,7 @@ export default class ProductController {
             const result = await productService.deleteProduct(idProduct)
             res.setHeader('Content-Type','application/json');
             if (Object.entries(result).length === 0){
-                res.status(404).json({ status: 'error', error: 'product not found' })
+                throw new CustomError('product not found', STATUS_CODES.NOT_FOUND, 'The product does not exist, enter a valid one')
             } else {
                 const products = await productService.getProducts()
                 console.log(result)
@@ -113,7 +115,7 @@ export default class ProductController {
                 res.status(200).json({ status: 'success', message: 'product successfully removed' })
             } 
         } catch (error) {
-            res.status(500).json({ status: 'error', error: error.message })
+            errorHandler(error, req, res)
         } 
     }
 }

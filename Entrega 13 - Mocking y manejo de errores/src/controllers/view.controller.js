@@ -1,6 +1,7 @@
 import { cartService } from "../services/cart.services.js"
 import { productService } from "../services/product.services.js"
 import { decodeToken } from '../utils.js'
+import { errorHandler } from "../middleware/errorHandler.js"
 
 export default class ViewController {
 
@@ -25,7 +26,7 @@ export default class ViewController {
             const title = 'Carrito'      
             res.status(200).render('cart', {title, products})
         } catch (error){
-            res.status(500).json({ status: 'error', error: error.message })
+            errorHandler(error, req, res)
         }    
     }
     

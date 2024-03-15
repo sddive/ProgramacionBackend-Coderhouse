@@ -1,4 +1,6 @@
 import { decodeToken } from "../utils.js"
+import { errorHandler } from "./errorHandler.js";
+import { STATUS_CODES } from "../utils/codeError.js";
 
 export const auth = (req, res, next) => {
     console.log(req.user)
@@ -13,6 +15,7 @@ export const auth = (req, res, next) => {
         req.user = decodeToken(token)
         next()
     } catch (error) {
-        return res.status(401).json({ error: error.message })
+        const err = new CustomError('Authentication Error', STATUS_CODES.ERROR_AUTENTICACION, 'To use the resource you must log in')
+        errorHandler(err, req, res)
     }
 }
