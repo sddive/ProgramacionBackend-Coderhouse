@@ -17,7 +17,7 @@ if(!validMode.includes(opts.mode.toLowerCase())){
 
 const mode=opts.mode
 
-console.log(mode)
+console.log('Ejecutando en modo: ' + mode)
 
 const result = dotenv.config(
     {

@@ -8,7 +8,6 @@ import mongoose from "mongoose"
 import UserDTO from '../dto/user.dto.js'
 import User from '../dao/classes/user.dao.js'
 import { cartService } from '../services/cart.services.js'
-
 const userDAO = new User()
 
 const searchToken=(req)=>{
@@ -46,11 +45,12 @@ export const initPassport=()=>{
             try {
                 let {first_name, last_name, email} = req.body
                 if(!first_name || !last_name || !email || !password){
+                    req.logger.http('Faltan datos para registrar al usuario')
                     return done(null, false)
                 }
             
                 let regMail=/^(([^<>()\[\]\\.,;:\s@”]+(\.[^<>()\[\]\\.,;:\s@”]+)*)|(“.+”))@((\[[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}])|(([a-zA-Z\-0–9]+\.)+[a-zA-Z]{2,}))$/
-                console.log(regMail.test(email))
+                req.logger.debug(regMail.test(email))
                 if(!regMail.test(email)){
                     return done(null, false)
                 }
@@ -64,7 +64,9 @@ export const initPassport=()=>{
                 let user
                 try {
                     let cart = await cartService.addCart()
+                    req.logger.debug(JSON.stringify(cart))
                     user = await userDAO.create({first_name, last_name, email, password, cart:cart._id})
+                    req.logger.debug(JSON.stringify(user))
                     // res.redirect(`/login?mensaje=Usuario ${email} registrado correctamente`)
                     let userDTO = new UserDTO(user)
                     return done(null, userDTO)
@@ -92,7 +94,7 @@ export const initPassport=()=>{
                 }
                 let user
                 if(username === 'adminCoder@coder.com' && password === 'adminCod3r123'){
-                    console.log('entre al admin')
+                    req.logger.debug('Inicie sesión con usuario admin.')
                     user = {_id: new mongoose.Types.ObjectId(), first_name:'Admin', last_name:'Coder',  email:'adminCoder@coder.com', role: 'admin'}
                     let userDTO = new UserDTO(user)
                     return done(null, userDTO)
@@ -100,13 +102,13 @@ export const initPassport=()=>{
 
                 user = await userDAO.getByEmail(username)
                 if(!user){
+                    req.logger.http(`No existe usuario con el email ${username}`)
                     return done(null, false)
                 }
                 if(!validPassword(user, password)){
                     return done(null, false)
                 }     
 
-                //console.log(Object.keys(user))
                 let userDTO = new UserDTO(user)
                 return done(null, userDTO)
                     // previo a devolver un usuario con done, passport graba en la req, una propiedad

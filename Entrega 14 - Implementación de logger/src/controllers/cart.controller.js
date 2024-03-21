@@ -13,8 +13,10 @@ export default class CartController {
         try {
             let cart = await cartService.addCart()
             if (Object.entries(cart).length === 0){
+                req.logger.error(`No se pudo crear el carrito`)
                 throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'cart could not be created')
             } else {
+                req.logger.info(`Carrito ${cart.id} creado`)
                 res.status(200).json({ status: 'success', error: `cart ${cart.id} created` })
             } 
         } catch (error) {
@@ -27,10 +29,12 @@ export default class CartController {
         try {
             let idCart = req.params.cid
             if(!mongoose.Types.ObjectId.isValid(idCart)){
+                req.logger.http(`El carrito ${cart.id} no existe`)
                 throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
             }
             let productsToCart = await cartService.getProductsToCart(idCart)
             if (!productsToCart){
+                req.logger.info(`No se pudieron acceder a los productos del carrito`)
                 throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
             } else {
                 res.status(200).json({products: productsToCart})
@@ -45,9 +49,11 @@ export default class CartController {
         try {
             const {cid, pid} = req.params
             if(!mongoose.Types.ObjectId.isValid(cid)){
+                req.logger.http(`El carrito ${cid} no existe`)
                 throw new CustomError('cart not found', STATUS_CODES.NOT_FOUND, 'The cart does not exist, enter a valid one')
             }
             if(!mongoose.Types.ObjectId.isValid(pid)){
+                req.logger.http(`El carrito ${pid} no existe`)
                 throw new CustomError('product not found', STATUS_CODES.NOT_FOUND, 'The product does not exist, enter a valid one')
             }
             const cart = await cartService.addProduct(cid, pid)
@@ -148,7 +154,7 @@ export default class CartController {
                 }
             }
 
-            console.log(newProductCart)
+            req.logger.debug(newProductCart)
             if(amount > 0){
                 ticket = await ticketService.createTicket({amount, purchaser:email})
                 let updateCart = await cartService.updateAllProducts(req.params.cid, newProductCart)

@@ -19,14 +19,7 @@ const loggerDevelopment = winston.createLogger(
                     level: "debug",
                     format: winston.format.combine(
                         winston.format.colorize({
-                            colors: { 
-                                fatal: "magenta",
-                                error: "red",
-                                warning: "yellow",
-                                info: "green",
-                                http: "cyan",
-                                debug: "blue"
-                            }
+                            colors: { fatal: "magenta", error: "red", warning: "yellow", info: "green", http: "cyan", debug: "blue"}
                         }),
                         winston.format.timestamp(),
                         winston.format.simple()
@@ -47,14 +40,7 @@ const loggerProduction = winston.createLogger(
                     level: 'info',
                     format: winston.format.combine(
                         winston.format.colorize({
-                            colors: { 
-                                fatal: "magenta",
-                                error: "red",
-                                warning: "yellow",
-                                info: "green",
-                                http: "cyan",
-                                debug: "blue"
-                            }
+                            colors: { fatal: "magenta", error: "red", warning: "yellow", info: "green", http: "cyan", debug: "blue"}
                         }),
                         winston.format.timestamp(),
                         winston.format.simple()

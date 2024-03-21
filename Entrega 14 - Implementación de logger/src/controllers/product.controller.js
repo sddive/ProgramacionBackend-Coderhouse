@@ -127,7 +127,7 @@ export default class ProductController {
                 throw new CustomError('product not found', STATUS_CODES.NOT_FOUND, 'The product does not exist, enter a valid one')
             } else {
                 const products = await productService.getProducts()
-                console.log(result)
+                req.logger.debug(`Resultado de eliminar producto: ${result}`)
                 io.emit('deleteProduct', result)
                 res.status(200).json({ status: 'success', message: 'product successfully removed' })
             } 

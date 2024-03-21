@@ -5,10 +5,11 @@ import productsRouter from './routers/products.router.js'
 import cartsRouter from './routers/carts.router.js'
 import viewsRouter from './routers/views.router.js'
 import mocksRouter from './routers/mocks.router.js'
-import sessionsRouter from './routers/sessions.router.js';
+import sessionsRouter from './routers/sessions.router.js'
+import loggerRouter from './routers/logger.router.js'
 import __dirname from './utils.js'
 import mongoose from 'mongoose'
-import { initPassport } from './config/config.passport.js';
+import { initPassport } from './config/config.passport.js'
 import passport from 'passport'
 import cookieParser from 'cookie-parser'
 import { config } from './config/config.dotenv.js'
@@ -42,6 +43,7 @@ app.use('/api/sessions/', sessionsRouter)
 app.use('/api/products/', productsRouter)
 app.use('/api/carts/', cartsRouter)
 app.use('/mockingproducts', mocksRouter)
+app.use('/loggertest', loggerRouter)
 app.use('/', viewsRouter)
 
 let users = []

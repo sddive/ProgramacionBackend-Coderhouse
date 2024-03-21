@@ -12,6 +12,7 @@ export default class MockController {
             }
             res.status(200).json({ status: 'success', payload: products })
         } catch (error) {
+            req.logger.fatal('Error al generar producto mock')
             errorHandler(error, req, res)
         }  
     }
