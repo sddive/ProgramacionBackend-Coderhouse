@@ -47,6 +47,7 @@ export default class CartController {
     async addProduct (req, res){
         res.setHeader('Content-Type','application/json')
         try {
+            let user = req.user
             const {cid, pid} = req.params
             if(!mongoose.Types.ObjectId.isValid(cid)){
                 req.logger.http(`El carrito ${cid} no existe`)
@@ -55,6 +56,12 @@ export default class CartController {
             if(!mongoose.Types.ObjectId.isValid(pid)){
                 req.logger.http(`El carrito ${pid} no existe`)
                 throw new CustomError('product not found', STATUS_CODES.NOT_FOUND, 'The product does not exist, enter a valid one')
+            }
+            let product = await productService.getProductById(pid)
+            if (product){
+                if (product.owner === user.email){
+                    throw new CustomError('is the owner of product', STATUS_CODES.ERROR_ARGUMENTOS, 'The owner cannot add his products')
+                }
             }
             const cart = await cartService.addProduct(cid, pid)
             if (!cart){

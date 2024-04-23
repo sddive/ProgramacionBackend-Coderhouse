@@ -69,6 +69,7 @@ export default class ProductController {
     
     async addProduct(req, res){
         try {
+            let user = req.user
             let newProduct = req.body
             const requiredFields = ['title', 'description', 'price', 'code', 'stock', 'category', 'status']
             const validFields = ['title', 'description', 'price', 'thumbnails', 'code', 'stock', 'category', 'status', 'deleted']
@@ -84,7 +85,9 @@ export default class ProductController {
             if (!validFieldsNewProduct) {
                 throw new CustomError(`the field ${fieldNew} is not valid`, STATUS_CODES.ERROR_ARGUMENTOS, errorArgumentos(newProduct))
             }
-
+            if (user.rol === 'premium'){
+                newProduct = {...newProduct, owner:user.email}
+            }            
             let result = await productService.addProduct(newProduct)
             res.setHeader('Content-Type','application/json')
             if (result.hasOwnProperty('error')){
@@ -100,12 +103,19 @@ export default class ProductController {
     
     async updateProduct(req, res){
         try {
+            let user = req.user
             let idProduct = req.params.idProduct
             let updateProduct = req.body
+            let productOld = await productService.getProductById(idProduct)
+            if (productOld){
+                if (productOld.owner !== user.email && user.role !== 'admin'){
+                    throw new CustomError('error in product arguments', STATUS_CODES.ERROR_ARGUMENTOS, 'Review the arguments sent to update the product.')
+                }
+            }
             let result = await productService.updateProduct(idProduct, updateProduct)
             res.setHeader('Content-Type','application/json');
             if (result.hasOwnProperty('error')){
-                throw new CustomError('error in product arguments', STATUS_CODES.ERROR_ARGUMENTOS, 'Review the arguments sent to create the product.')
+                throw new CustomError('error in product arguments', STATUS_CODES.ERROR_ARGUMENTOS, 'Review the arguments sent to update the product.')
             } else {
                 res.status(200).json( {status: 'success', message: 'product successfully updated'} );
             } 
@@ -120,6 +130,12 @@ export default class ProductController {
             if(!mongoose.Types.ObjectId.isValid(idProduct)){
                 res.setHeader('Content-Type','application/json');
                 return res.status(400).json({error:`Ingrese un id válido...!!!`})
+            }
+            let productOld = await productService.getProductById(idProduct)
+            if (productOld){
+                if (productOld.owner !== user.email && user.role !== 'admin'){
+                    throw new CustomError('error in product arguments', STATUS_CODES.ERROR_ARGUMENTOS, 'Review the arguments sent to update the product.')
+                }
             }
             const result = await productService.deleteProduct(idProduct)
             res.setHeader('Content-Type','application/json');

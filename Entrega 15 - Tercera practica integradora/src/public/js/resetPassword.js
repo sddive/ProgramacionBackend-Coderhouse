@@ -4,7 +4,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const token = urlParams.get('token');
 
     document.getElementById('token').value = token;
-    console.log(token)
 
     const checkPasswordsMatch = () => {
         const password = document.getElementById('password01').value;

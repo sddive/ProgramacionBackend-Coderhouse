@@ -5,6 +5,7 @@ import productsRouter from './routers/products.router.js'
 import cartsRouter from './routers/carts.router.js'
 import viewsRouter from './routers/views.router.js'
 import mocksRouter from './routers/mocks.router.js'
+import usersRouter from './routers/users.router.js'
 import sessionsRouter from './routers/sessions.router.js'
 import loggerRouter from './routers/logger.router.js'
 import __dirname from './utils.js'
@@ -44,6 +45,7 @@ app.use(middLogg)
 app.use('/api/sessions/', sessionsRouter)
 app.use('/api/products/', productsRouter)
 app.use('/api/carts/', cartsRouter)
+app.use('/api/users/', usersRouter)
 app.use('/mockingproducts', mocksRouter)
 app.use('/loggertest', loggerRouter)
 app.use('/', viewsRouter)

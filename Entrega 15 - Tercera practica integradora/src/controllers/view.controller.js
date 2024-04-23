@@ -80,16 +80,16 @@ export default class ViewController {
         res.redirect('/login')
     }
 
-    restorePassword01(req, res){
+    resetPassword01(req, res){
         const title = 'Restaurar contraseña'   
         let {error, message} = req.query   
-        res.status(200).render('restorePassword01', {title, error, message})    
+        res.status(200).render('resetPassword01', {title, error, message})    
     }
 
-    restorePassword02(req, res){
+    resetPassword02(req, res){
         const title = 'Restaurar contraseña'   
         let {error, message} = req.query
         console.log(error)
-        res.status(200).render('restorePassword02', {title, error, message})    
+        res.status(200).render('resetPassword02', {title, error, message})    
     }
 }

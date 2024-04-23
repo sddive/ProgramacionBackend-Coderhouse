@@ -1,9 +1,21 @@
 import User from "../dao/classes/user.dao.js";
+import UserDTO from "../dto/user.dto.js";
 
 class UserService {
     
     constructor(){
         this.userDAO = new User()
+    }
+
+    async getById(id){
+        try {
+            let user = await this.userDAO.getById(id)
+            if (user){
+                return new UserDTO(user)
+            }
+        } catch (error) {
+            throw new Error(error.message)        
+        }
     }
 
     async getByEmail(email){
