@@ -19,4 +19,13 @@ export default class User{
             throw new Error(error.message)  
         }
     }
+
+    async update(user){
+        try {
+            return await userModel.findOneAndUpdate({email:user.email},user)
+        } catch (error) {
+            console.log
+            throw new Error(error.message)  
+        }
+    }
 }

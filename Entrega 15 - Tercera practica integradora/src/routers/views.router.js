@@ -14,5 +14,7 @@ router.get('/products', viewController.products)
 router.get('/login', viewController.login)
 router.get('/signup', viewController.signup)
 router.get('/logout', viewController.logout)
+router.get('/restorePassword01', viewController.restorePassword01)
+router.get('/restorePassword02', viewController.restorePassword02)
 
 export default router

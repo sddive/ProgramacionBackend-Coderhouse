@@ -12,5 +12,8 @@ router.get('/github', passport.authenticate('github',{session: false}), sessionC
 router.get('/callbackGithub', passport.authenticate('github',{failureRedirect:'/api/sessions/errorGithub', session: false}), sessionController.callbackGithub)
 router.get('/errorGithub', sessionController.errorGithub)
 router.get("/current", passport.authenticate('current',{session: false}), sessionController.current)
+router.post("/restorePassword01", sessionController.restorePassword01)
+router.get("/restorePassword02", sessionController.restorePassword02)
+router.post("/restorePassword03", sessionController.restorePassword03)
 
 export default router

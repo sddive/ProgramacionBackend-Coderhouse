@@ -33,5 +33,7 @@ export const config = {
     clientID: process.env.clientID, 
     clientSecret: process.env.clientSecret, 
     SECRET_KEY: process.env.SECRET_KEY,
-    MODE: mode
+    MODE: mode,
+    userEmail: process.env.userEmail, 
+    passEmail: process.env.passEmail
 }

@@ -39,6 +39,8 @@ app.use(passport.initialize())
 app.use(cookieParser())
 app.use(middLogg)
 
+
+
 app.use('/api/sessions/', sessionsRouter)
 app.use('/api/products/', productsRouter)
 app.use('/api/carts/', cartsRouter)
