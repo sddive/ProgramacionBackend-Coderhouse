@@ -1,0 +1,28 @@
+<h2>Login</h2>
+<hr>
+
+<form action="/api/sessions/login" method="post">
+
+    {{#if error}}
+        <div style="color: red;">{{error}}</div>
+    {{/if}}
+
+    {{#if mensaje}}
+        <div style="color: green;">{{mensaje}}</div>
+    {{/if}}
+    
+    <input type="email" name="email" placeholder="email">
+    <input type="password" name="password" placeholder="password">
+    <br>
+    <input type="submit" value="Ingresar">
+</form>
+
+<hr>
+<a href="/api/sessions/github">Acceso con GitHub</a><br>
+<a href="/signup">Regístrate</a><br>
+<a href="/resetPassword01">Resetear contraseña</a>
+<hr>
+<a href="/">Home</a><br>
+<a href="/chat">Chat</a><br>
+<a href="/realTimeProducts">Real time products</a><br>
+<a href="/products">Products</a>

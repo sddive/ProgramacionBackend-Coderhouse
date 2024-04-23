@@ -1,0 +1,213 @@
+securitySchemes:
+  cookieAuth:
+    type: apiKey
+    in: cookie
+    name: coderCookie
+    description: Enter access token from cookie
+tags:
+  - name: Carrito
+    description: Operaciones del carrito
+paths:
+  /api/carts:
+    post:
+      summary: Crear nuevo carrito
+      tags:
+        - Carrito
+      responses:
+        '200':
+          description: Carrito creado correctamente
+        '404':
+          description: No se pudo crear el carrito
+        '500':
+          description: Error inesperado en el servidor
+  /api/carts/{cid}:
+    get:
+      summary: Obtener carrito por Id
+      tags:
+        - Carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+            description: El id del carrito
+      responses:
+        '200':
+          description: Carrito devuelto correctamente
+        '404':
+          description: No existe el carrito
+        '500':
+          description: Error inesperado en el servidor
+    put:
+      summary: Actualizar carrito
+      tags:
+        - Carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+            description: El id del carrito
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  description: El id del producto
+                quantity:
+                  type: integer
+                  description: La cantidad del producto en el carrito
+                  default: 1
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Carrito actualizado correctamente
+        '404':
+          description: No existe el carrito
+        '500':
+          description: Error inesperado en el servidor
+    delete:
+      summary: Eliminar carrito
+      tags:
+        - Carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+            description: El id del carrito
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Carrito eliminado correctamente
+        '404':
+          description: El carrito no existe
+        '500':
+          description: Error inesperado en el servidor
+  /api/carts/{cid}/product/{pid}:
+    post:
+      summary: Añadir producto a carrito
+      tags:
+        - Carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+            description: El id del carrito
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+            description: El id del producto
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Producto agregado al carrito
+        '403':
+          description: El propietario del producto no lo puede añadir a su carrito
+        '404':
+          description: El carrito o producto no existe
+        '500':
+          description: Error inesperado en el servidor
+    delete:
+      summary: Eliminar producto del carrito
+      tags:
+        - Carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+            description: El id del carrito
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+            description: El id del producto a eliminar
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Producto eliminado del carrito 
+        '404':
+          description: El carrito o producto no existe
+        '500':
+          description: Error inesperado en el servidor
+    put:
+      summary: Actualizar la cantidad de producto del carrito
+      tags:
+        - Carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+            description: El id del carrito
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+            description: El id del producto
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              quantity:
+                type: integer
+                description: La nueva cantidad del producto en el carrito
+                default: 1
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Cantidad del producto actualizada
+        '404':
+          description: El carrito o producto no existe
+        '500':
+          description: Error inesperado en el servidor
+
+  /api/carts/{cid}/purchase:
+    post:
+      summary: Comprar carrito
+      tags:
+        - Carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+            description: El id del carrito
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Carrito comprado correctamente
+        '400':
+          description: No tiene productos en su carrito
+        '403':
+          description: No puede comprar el carrito de otro usuario
+        '404':
+          description: El carrito no existe
+        '500':
+          description: Error inesperado en el servidor
