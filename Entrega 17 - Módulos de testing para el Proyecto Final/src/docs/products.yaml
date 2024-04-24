@@ -1,0 +1,157 @@
+securitySchemes:
+  cookieAuth:
+    type: apiKey
+    in: cookie
+    name: coderCookie
+    description: Enter access token from cookie
+
+tags:
+  - name: Productos
+    description: Operaciones de los productos
+paths:
+  /api/products:
+    get:
+      tags:
+        - Productos
+      summary: Todos los productos
+      description: Devuelve todos los productos del ecommerce
+      parameters:
+        - name: page
+          in: query
+          description: Numero de página
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          description: Numero de items por página
+          required: false
+          type: integer
+          format: int32
+        - name: category
+          in: query
+          description: Filtro por categoria
+          required: false
+          type: string
+        - name: available
+          in: query
+          description: Filtro por disponibilidad
+          required: false
+          type: boolean
+        - name: sortByPrice
+          in: query
+          description: Ordenar por precio, ascendente o descendente
+          required: false
+          type: string
+          enum:
+            - asc
+            - desc
+      responses:
+        '200':
+          description: Lista del productos
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Product'
+        '500':
+          description: Error inesperado en el servidor
+    post:
+      tags:
+        - Productos
+      summary: Agregar nuevo producto
+      description: Agrega nuevo producto a la base de datos
+      parameters:
+        - in: body
+          name: product
+          description: El producto a agregar
+          required: true
+          schema:
+            $ref: '#/definitions/Product'
+      requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Product'
+      security:
+        - cookieAuth: []
+      responses:
+        '201':
+          description: Producto agregado correctamente
+        '400':
+          description: Error en los argumentos enviados
+        '403':
+          description: Acceso denegado no tiene los permisos
+        '500':
+          description: Error inesperado en el servidor
+  /api/products/{pid}:
+    get:
+      tags:
+        - Productos
+      summary: Obtener producto por id
+      description: Devuelve el producto con id del parametro
+      parameters:
+        - name: pid
+          in: path
+          description: El id del producto
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Producto devuelto correctamente
+          schema:
+            $ref: '#/definitions/Product'
+        '404':
+          description: El producto no existe
+        '500':
+          description: Error inesperado en el servidor
+    delete:
+      tags:
+        - Productos
+      summary: Eliminar producto
+      description: Elimina el producto del id del parametro
+      parameters:
+        - name: pid
+          in: path
+          description: El id del producto
+          required: true
+          type: string
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Producto eliminado correctamente
+        '403':
+          description: Acceso denegado no tiene los permisos
+        '404':
+          description: El producto no existe
+        '500':
+          description: Error inesperado en el servidor
+definitions:
+  Product:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Nombre del producto
+      description:
+        type: string
+        description: Descripción del producto
+      price:
+        type: number
+        format: float
+        description: Precio del producto
+      code:
+        type: string
+        description: Código del producto
+      category:
+        type: string
+        description: Categoria del producto
+      stock:
+        type: integer
+        description: Cantidad de stock del producto
+      thumbnails:
+        type: array
+        description: Imagenes del producto
+        items:
+          type: string
